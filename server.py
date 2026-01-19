@@ -1,11 +1,33 @@
 from flask import Flask, request, send_file
 from flask_cors import CORS
-import cv2
-import numpy as np
+import torch
+from torchvision import transforms
+from PIL import Image
 import io
 
 app = Flask(__name__)
 CORS(app)
+
+# Transformação de pré-processamento
+preprocess = transforms.Compose([
+    transforms.Resize((512,512)),  # ajusta resolução
+    transforms.Grayscale(num_output_channels=1),
+    transforms.ToTensor()
+])
+
+# Função simples para gerar contorno (simulando Sketch Flow)
+def generate_stencil(image_pil):
+    img = preprocess(image_pil)
+    img = img * 255
+    img = img.squeeze(0).byte().numpy()
+    
+    # Aplicar contorno simples com Pillow / Numpy
+    from PIL import ImageFilter, ImageOps
+    pil_img = Image.fromarray(img)
+    pil_img = pil_img.filter(ImageFilter.FIND_EDGES)  # detecção de borda
+    pil_img = ImageOps.invert(pil_img)  # fundo branco, linhas pretas
+    pil_img = pil_img.convert("L")
+    return pil_img
 
 @app.route('/stencil', methods=['POST'])
 def stencil():
@@ -13,38 +35,13 @@ def stencil():
     if not file:
         return "Nenhuma imagem enviada", 400
 
-    # Ler imagem enviada
-    in_memory_file = io.BytesIO()
-    file.save(in_memory_file)
-    in_memory_file.seek(0)
-    file_bytes = np.frombuffer(in_memory_file.read(), np.uint8)
-    img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+    image_pil = Image.open(file.stream).convert("RGB")
+    stencil_img = generate_stencil(image_pil)
 
-    # Redimensiona proporcionalmente se muito grande
-    max_dim = 1024
-    h, w = img.shape[:2]
-    if max(h, w) > max_dim:
-        scale = max_dim / max(h, w)
-        img = cv2.resize(img, (int(w*scale), int(h*scale)))
-
-    # Converter para tons de cinza
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-    # Suavização para remover ruído sem borrar contornos
-    gray = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
-
-    # Adaptive Threshold para contornos consistentes
-    thresh = cv2.adaptiveThreshold(gray, 255,
-                                   cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
-                                   cv2.THRESH_BINARY, 11, 2)  # Fundo branco, linhas pretas
-
-    # Dilatar levemente para linhas contínuas
-    kernel = np.ones((2,2), np.uint8)
-    stencil_img = cv2.dilate(thresh, kernel, iterations=1)
-
-    # Salvar em memória
-    is_success, buffer = cv2.imencode(".png", stencil_img)
-    return send_file(io.BytesIO(buffer.tobytes()), mimetype='image/png')
+    buf = io.BytesIO()
+    stencil_img.save(buf, format='PNG')
+    buf.seek(0)
+    return send_file(buf, mimetype='image/png')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
