@@ -5,7 +5,26 @@ import numpy as np
 import io
 
 app = Flask(__name__)
-CORS(app)  # Permite requisições do HTML
+CORS(app)
+
+def thinning(img):
+    """Afinamento de linhas (Zhang-Suen) para stencil nítido"""
+    size = np.size(img)
+    skel = np.zeros(img.shape, np.uint8)
+    ret, img = cv2.threshold(img, 127, 255, 0)
+    element = cv2.getStructuringElement(cv2.MORPH_CROSS, (3,3))
+    done = False
+
+    while(not done):
+        eroded = cv2.erode(img, element)
+        temp = cv2.dilate(eroded, element)
+        temp = cv2.subtract(img, temp)
+        skel = cv2.bitwise_or(skel, temp)
+        img = eroded.copy()
+        zeros = size - cv2.countNonZero(img)
+        if zeros == size:
+            done = True
+    return skel
 
 @app.route('/stencil', methods=['POST'])
 def stencil():
@@ -13,14 +32,13 @@ def stencil():
     if not file:
         return "Nenhuma imagem enviada", 400
 
-    # Ler imagem enviada
     in_memory_file = io.BytesIO()
     file.save(in_memory_file)
     in_memory_file.seek(0)
     file_bytes = np.frombuffer(in_memory_file.read(), np.uint8)
     img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-    # Redimensiona se muito grande
+    # Redimensiona proporcionalmente se for muito grande
     max_dim = 1024
     h, w = img.shape[:2]
     if max(h, w) > max_dim:
@@ -30,18 +48,16 @@ def stencil():
     # Converter para tons de cinza
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-    # Aplicar filtro bilateral para suavizar mas manter bordas
+    # Filtro bilateral para suavizar mas manter contornos
     gray = cv2.bilateralFilter(gray, d=9, sigmaColor=75, sigmaSpace=75)
 
-    # Detecção de borda Canny mais agressiva
-    edges = cv2.Canny(gray, threshold1=40, threshold2=120)
+    # Adaptive Threshold para contornos consistentes
+    thresh = cv2.adaptiveThreshold(gray, 255,
+                                   cv2.ADAPTIVE_THRESH_GAUSSIAN_C,
+                                   cv2.THRESH_BINARY_INV, 11, 2)
 
-    # Dilatar as linhas para ficarem mais grossas e contínuas
-    kernel = np.ones((2,2), np.uint8)
-    edges = cv2.dilate(edges, kernel, iterations=1)
-
-    # Inverter: fundo branco, linhas pretas
-    stencil_img = cv2.bitwise_not(edges)
+    # Afinamento de linhas
+    stencil_img = thinning(thresh)
 
     # Salvar em memória
     is_success, buffer = cv2.imencode(".png", stencil_img)
