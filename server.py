@@ -1,47 +1,147 @@
-from flask import Flask, request, send_file
-from flask_cors import CORS
-import torch
-from torchvision import transforms
+import gradio as gr
+import pandas as pd
+import numpy as np
+import cv2
 from PIL import Image
-import io
+from sklearn.cluster import KMeans
 
-app = Flask(__name__)
-CORS(app)
+# ------------------------
+# Carrega banco de tintas
+# ------------------------
+def carregar_tintas():
+    df = pd.read_csv("tintas.csv")
+    return df
 
-# Transformação de pré-processamento
-preprocess = transforms.Compose([
-    transforms.Resize((512,512)),  # ajusta resolução
-    transforms.Grayscale(num_output_channels=1),
-    transforms.ToTensor()
-])
+tintas_df = carregar_tintas()
 
-# Função simples para gerar contorno (simulando Sketch Flow)
-def generate_stencil(image_pil):
-    img = preprocess(image_pil)
-    img = img * 255
-    img = img.squeeze(0).byte().numpy()
-    
-    # Aplicar contorno simples com Pillow / Numpy
-    from PIL import ImageFilter, ImageOps
-    pil_img = Image.fromarray(img)
-    pil_img = pil_img.filter(ImageFilter.FIND_EDGES)  # detecção de borda
-    pil_img = ImageOps.invert(pil_img)  # fundo branco, linhas pretas
-    pil_img = pil_img.convert("L")
-    return pil_img
+# ------------------------
+# Distância de cor
+# ------------------------
+def distancia(c1, c2):
+    return np.linalg.norm(np.array(c1) - np.array(c2))
 
-@app.route('/stencil', methods=['POST'])
-def stencil():
-    file = request.files.get('image')
-    if not file:
-        return "Nenhuma imagem enviada", 400
+# ------------------------
+# Encontra a tinta mais próxima da marca escolhida
+# ------------------------
+def achar_tinta_mais_proxima(rgb, marca):
+    banco = tintas_df[tintas_df["marca"] == marca]
+    melhor = None
+    menor_dist = 999999
 
-    image_pil = Image.open(file.stream).convert("RGB")
-    stencil_img = generate_stencil(image_pil)
+    for _, row in banco.iterrows():
+        cor_banco = (row["r"], row["g"], row["b"])
+        d = distancia(rgb, cor_banco)
+        if d < menor_dist:
+            menor_dist = d
+            melhor = row
 
-    buf = io.BytesIO()
-    stencil_img.save(buf, format='PNG')
-    buf.seek(0)
-    return send_file(buf, mimetype='image/png')
+    return melhor
 
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=10000)
+# ------------------------
+# Mistura aproximada com primárias
+# ------------------------
+def mistura_primarias(rgb):
+    r, g, b = rgb
+    total = max(r+g+b, 1)
+
+    pr = round((r/total)*100)
+    pg = round((g/total)*100)
+    pb = round((b/total)*100)
+
+    return f"Vermelho: {pr}% | Amarelo: {pg}% | Azul: {pb}%"
+
+# ------------------------
+# Texto de aplicação no desenho
+# ------------------------
+def texto_aplicacao(rgb):
+    r, g, b = rgb
+    brilho = (r+g+b)/3
+
+    if brilho > 200:
+        return "Usar em áreas de luz, reflexos e pontos mais altos do volume."
+    elif brilho > 120:
+        return "Usar nas áreas de transição entre luz e sombra."
+    elif brilho > 60:
+        return "Usar para sombra média, base de profundidade."
+    else:
+        return "Usar para sombras profundas, recortes e áreas de maior peso visual."
+
+# ------------------------
+# Extrai TODAS as cores do desenho
+# ------------------------
+def extrair_cores(imagem, marca):
+    img = np.array(imagem)
+    img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
+
+    pixels = img.reshape((-1,3))
+    pixels = np.float32(pixels)
+
+    # K automático baseado na diversidade real do desenho
+    # Quanto mais detalhe o desenho tiver, mais cores aparecem
+    k = min(25, len(np.unique(pixels, axis=0)))
+    kmeans = KMeans(n_clusters=k, random_state=42)
+    kmeans.fit(pixels)
+
+    cores = np.uint8(kmeans.cluster_centers_)
+
+    resultados = []
+
+    for cor in cores:
+        rgb = (int(cor[2]), int(cor[1]), int(cor[0]))
+        tinta = achar_tinta_mais_proxima(rgb, marca)
+
+        mistura = mistura_primarias(rgb)
+        aplicacao = texto_aplicacao(rgb)
+
+        resultados.append({
+            "rgb": rgb,
+            "nome": tinta["nome"],
+            "mistura": mistura,
+            "aplicacao": aplicacao
+        })
+
+    return resultados
+
+# ------------------------
+# Interface
+# ------------------------
+def processar(imagem, marca):
+    resultados = extrair_cores(imagem, marca)
+
+    html = "<div style='background:#111;padding:20px;'>"
+    for r in resultados:
+        cor = f"rgb{r['rgb']}"
+        html += f"""
+        <div style='background:#fff;margin:10px;padding:10px;border-radius:8px'>
+            <div style='height:40px;background:{cor};border:1px solid #000'></div>
+            <b>Nome da tinta:</b> {r['nome']}<br>
+            <b>RGB:</b> {r['rgb']}<br>
+            <b>Mistura primárias:</b> {r['mistura']}<br>
+            <b>Onde aplicar:</b> {r['aplicacao']}
+        </div>
+        """
+    html += "</div>"
+    return html
+
+
+with gr.Blocks(css="""
+body { background:#000; }
+h1, h2, p { color:white; }
+""") as demo:
+
+    gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores")
+    gr.Markdown("Sistema profissional para extração de paletas reais baseadas na marca de tinta usada no estúdio.")
+
+    marca = gr.Dropdown(choices=tintas_df["marca"].unique().tolist(),
+                         value="Electric Ink",
+                         label="Selecione a marca da tinta")
+
+    imagem = gr.Image(type="pil", label="Upload do desenho")
+
+    btn = gr.Button("Gerar Paleta Profissional")
+
+    saida = gr.HTML()
+
+    btn.click(processar, inputs=[imagem, marca], outputs=saida)
+
+demo.launch()
