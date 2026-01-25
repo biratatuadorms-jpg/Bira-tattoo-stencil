@@ -1,0 +1,393 @@
+marca,nome,r,g,b
+Electric Ink,Super White,250,250,250
+Electric Ink,White Ghost,240,240,240
+Electric Ink,Branco Real,255,255,255
+Electric Ink,Branco Mix,245,245,245
+
+Electric Ink,Preto Tribal,5,5,5
+Electric Ink,Preto Linha,15,15,15
+Electric Ink,Preto Maori,10,10,10
+Electric Ink,Preto Marfim,20,20,20
+
+Electric Ink,Cinza Claro,190,190,190
+Electric Ink,Cinza Médio,130,130,130
+Electric Ink,Cinza Escuro,70,70,70
+Electric Ink,Cinza Prata,200,200,200
+Electric Ink,Cinza Azulado I,160,170,180
+Electric Ink,Cinza Azulado II,120,130,145
+Electric Ink,Cinza Naval,60,70,90
+
+Electric Ink,Amarelo Canário,255,235,60
+Electric Ink,Amarelo Limão,240,255,60
+Electric Ink,Amarelo Ouro,255,200,40
+Electric Ink,Amarelo Ocre,200,160,60
+Electric Ink,Amarelo Banana,255,225,90
+
+Electric Ink,Laranja Real,255,120,0
+Electric Ink,Laranja Pastel,255,180,100
+Electric Ink,Laranja Papaya,255,140,60
+Electric Ink,Laranja Oriental,255,100,30
+
+Electric Ink,Vermelho Ferrari,200,20,20
+Electric Ink,Vermelho Bombeiro,180,0,0
+Electric Ink,Vermelho Cereja,150,0,30
+
+Electric Ink,Rosa Bebê,255,200,210
+Electric Ink,Rosa,255,120,160
+Electric Ink,Rosa Choque,255,0,130
+Electric Ink,Blush,240,170,160
+Electric Ink,Pink,255,60,180
+
+Electric Ink,Roxo Escuro,80,20,100
+Electric Ink,Lilás,190,150,220
+Electric Ink,Lavanda,170,130,200
+Electric Ink,Uva,90,40,110
+Electric Ink,Uva Claro,150,90,170
+Electric Ink,Violeta,120,60,160
+
+Electric Ink,Azul Bebê,180,210,240
+Electric Ink,Azul Céu,120,190,255
+Electric Ink,Azul Médio,50,100,180
+Electric Ink,Azul Royal,20,40,150
+Electric Ink,Azul Jeans,60,90,140
+Electric Ink,Azul Mar,0,130,170
+Electric Ink,Azul Turquesa,0,190,180
+Electric Ink,Turquesa,40,200,190
+Electric Ink,Midnight Blue,10,20,60
+
+Electric Ink,Verde Limão,160,255,60
+Electric Ink,Verde Claro,120,200,120
+Electric Ink,Verde Bandeira,0,150,60
+Electric Ink,Verde Esmeralda 2,0,120,80
+Electric Ink,Verde Folha,60,140,60
+Electric Ink,Verde Musgo,80,100,40
+Electric Ink,Verde Menta,120,220,180
+Electric Ink,Verde Água,120,220,200
+Electric Ink,Verde Mar,0,140,120
+Electric Ink,Verde Turquesa,0,180,160
+
+Electric Ink,Marrom Claro,160,110,70
+Electric Ink,Marrom Médio,120,80,50
+Electric Ink,Marrom Escuro,80,50,30
+Electric Ink,Chocolate,90,50,30
+Electric Ink,Canela,180,110,60
+Electric Ink,Ferrugem,150,70,30
+Electric Ink,Bronze,170,120,70
+Electric Ink,Areia,220,200,160
+Electric Ink,Bege,210,190,160
+Electric Ink,Creme,240,220,180
+Electric Ink,Marfim,250,235,200
+Electric Ink,Camurça,190,150,110
+
+Electric Ink,Pele Bebê,255,220,200
+Electric Ink,Pele,235,190,160
+Electric Ink,Pele Escuro,180,130,100
+Electric Ink,Natural,210,170,140
+Electric Ink,Pêssego,255,200,150
+Electric Ink,Salmão,250,150,120
+
+Electric Ink,Sumi Claro,200,200,200
+Electric Ink,Sumi Médio,120,120,120
+Electric Ink,Sumi Escuro,60,60,60
+Electric Ink,Set Sumi 1,220,220,220
+Electric Ink,Set Sumi 2,180,180,180
+Electric Ink,Set Sumi 3,140,140,140
+Electric Ink,Set Sumi 4,90,90,90
+Electric Ink,Set Sumi 5,40,40,40
+
+Intenze,Snow White Opaque,250,250,250
+Intenze,Snow White Mixing,240,240,240
+Intenze,True Black,10,10,10
+Intenze,Lining Black,5,5,5
+
+Intenze,Cherry Bomb,220,0,40
+Intenze,Raspberry,200,40,80
+Intenze,Lollipop,255,100,150
+Intenze,American Rose,235,80,120
+Intenze,Just Pink,255,180,190
+Intenze,Pink Panther,255,160,180
+
+Intenze,Lemon Yellow,255,230,0
+Intenze,Golden Yellow,255,200,20
+Intenze,Yellow Orchid,255,215,100
+Intenze,Banana Cream,255,230,180
+Intenze,Soft Orange,255,170,80
+Intenze,Hard Orange,255,140,60
+Intenze,Bright Orange,255,120,30
+Intenze,Tangerine,255,130,40
+
+Intenze,Bright Red,220,20,20
+Intenze,Red Cherry,200,30,30
+Intenze,Dark Red,180,10,10
+Intenze,True Magenta,200,0,90
+Intenze,Light Magenta,255,80,130
+Intenze,Fuschia,230,0,120
+
+Intenze,Blue Sky,100,170,240
+Intenze,Aquamarine,80,200,190
+Intenze,Periwinkle,180,160,230
+Intenze,Persian Blue,60,80,180
+Intenze,Mario's Blue,0,50,160
+Intenze,Mario's Light Blue,80,130,230
+Intenze,Baby Blue,140,200,240
+Intenze,Blue Silver,120,140,170
+Intenze,Teal,0,130,140
+
+Intenze,Dark Salmon,250,130,120
+Intenze,Coral,240,120,100
+Intenze,Sunburn,255,100,70
+Intenze,Peach,255,180,140
+
+Intenze,Hunter Green,0,110,60
+Intenze,Dragon Green,0,160,100
+Intenze,Grasshopper Green,80,180,90
+Intenze,Lime Green,170,230,60
+Intenze,Light Green,140,200,100
+Intenze,Sea Foam Green,140,220,190
+Intenze,Olive,100,120,60
+Intenze,Soldier Green,90,110,50
+Intenze,Moss,100,140,80
+
+Intenze,Dark Brown,100,60,40
+Intenze,Medium Brown,140,90,60
+Intenze,Bamboo,170,120,70
+Intenze,Sienna,180,100,60
+Intenze,Chestnut,150,80,60
+Intenze,Dark Chocolate,90,50,30
+Intenze,Fleshpot,240,200,180
+Intenze,Flesh,230,190,160
+Intenze,Medium Brown,160,110,80
+
+Intenze,Silver,200,200,200
+Intenze,Platinum,230,230,230
+Intenze,Purple Silver,180,150,200
+Intenze,Steel,140,150,170
+
+Intenze,Raw Umber Light,180,130,100
+Intenze,Raw Umber,120,80,50
+Intenze,Desert Sand Light,210,190,170
+Intenze,Desert Sand Medium,180,160,140
+Intenze,Desert Sand Dark,150,130,110
+Intenze,Dirty Beige,200,180,150
+
+Intenze,Peach,255,190,150
+Intenze,Rusty Brown,170,90,50
+Intenze,Dijon,200,160,70
+Intenze,Earth,140,120,90
+
+Dynamic,Preto União,5,5,5
+Dynamic,Preto Triplo,0,0,0
+Dynamic,Branco Pesado,250,250,250
+Dynamic,Branco,245,245,245
+
+Dynamic,Amarelo Canário,255,235,60
+Dynamic,Amarelo Limão,240,255,60
+Dynamic,Amarelo Dourado,255,200,40
+Dynamic,Amarelo Ouro,255,215,100
+Dynamic,Amarelo Brilhante,255,230,80
+
+Dynamic,Vermelho Chinês,200,20,20
+Dynamic,Vermelho Fogo,220,0,0
+Dynamic,Vermelho Vinho,150,0,30
+Dynamic,Vermelho Burgundy,170,20,40
+
+Dynamic,Laranja Brilhante,255,130,30
+Dynamic,Laranja,255,120,40
+Dynamic,Laranja Quente,255,140,60
+
+Dynamic,Rosa Bubble Gum,255,120,160
+Dynamic,Rosa Quente,255,60,180
+Dynamic,Rosa Claro,255,180,190
+Dynamic,Magenta,200,0,90
+Dynamic,Violeta,120,60,160
+Dynamic,Lavanda,180,140,200
+Dynamic,Pink,255,80,150
+
+Dynamic,Azul,30,60,140
+Dynamic,Azul Céu,100,170,240
+Dynamic,Azul Elétrico,0,80,170
+Dynamic,Azul Turquesa,0,180,180
+Dynamic,Azul Claro,80,130,230
+Dynamic,Azul Médio,50,100,180
+Dynamic,Azul Royal,20,40,150
+Dynamic,Turquesa,40,200,190
+Dynamic,Céu Claro,140,200,240
+
+Dynamic,Verde,0,140,80
+Dynamic,Verde Bandeira,0,120,60
+Dynamic,Verde Limão,170,230,60
+Dynamic,Verde Folha,60,140,60
+Dynamic,Verde Musgo,80,100,40
+Dynamic,Verde Água,120,220,200
+Dynamic,Verde Marinho,0,130,120
+Dynamic,Teal,0,130,140
+Dynamic,Lime Green,170,230,60
+Dynamic,Leaf Green,80,180,90
+
+Dynamic,Marrom,90,60,30
+Dynamic,Marrom Claro,140,90,60
+Dynamic,Marrom Médio,120,80,50
+Dynamic,Chocolate,100,50,30
+Dynamic,Brown Claro,140,100,70
+
+Dynamic,Roxo Escuro,80,20,100
+Dynamic,Tropical Purple,150,60,150
+
+Dynamic,Golden Yellow,255,200,20
+Dynamic,Tangerina,255,130,40
+
+Eternal Ink,White,250,250,250
+Eternal Ink,White Knight,245,245,245
+Eternal Ink,Triple Black,5,5,5
+Eternal Ink,Lining Black,10,10,10
+
+Eternal Ink,Lightning Yellow,255,240,0
+Eternal Ink,Bright Yellow,255,220,40
+Eternal Ink,Golden Yellow,255,200,30
+Eternal Ink,Bumble Bee,255,230,80
+Eternal Ink,Sunflower,255,220,50
+
+Eternal Ink,Orange,255,140,30
+Eternal Ink,Bright Orange,255,120,20
+Eternal Ink,Tangerine,255,130,40
+Eternal Ink,Georgia Peach,250,180,120
+
+Eternal Ink,Crimson Red,190,20,30
+Eternal Ink,Deep Red,180,0,20
+Eternal Ink,Dark Red,160,10,10
+Eternal Ink,Lipstick Red,200,30,30
+Eternal Ink,Light Red,230,60,60
+
+Eternal Ink,Hot Pink,255,60,140
+Eternal Ink,Cotton Candy,255,180,200
+Eternal Ink,Dusty Rose,220,100,110
+Eternal Ink,Magenta,200,0,90
+Eternal Ink,Light Magenta,235,80,140
+
+Eternal Ink,True Blue,20,60,180
+Eternal Ink,Blue Concentrate,10,30,150
+Eternal Ink,Sky Blue,90,180,240
+Eternal Ink,Peacock Blue,30,80,160
+Eternal Ink,Turquoise,50,180,180
+
+Eternal Ink,Green Concentrate,0,80,60
+Eternal Ink,Grass Green,60,140,60
+Eternal Ink,Lime Green,150,230,70
+Eternal Ink,Jungle Green,80,150,90
+Eternal Ink,Nuclear Green,180,220,90
+Eternal Ink,Avocado,160,180,60
+Eternal Ink,Graffiti Green,60,160,100
+Eternal Ink,Honey Dew,140,210,160
+
+Eternal Ink,Gray,150,150,150
+Eternal Ink,Neutral Gray 20,210,210,210
+Eternal Ink,Neutral Gray 40,180,180,180
+Eternal Ink,Neutral Gray 60,140,140,140
+Eternal Ink,Neutral Gray 80,90,90,90
+
+Eternal Ink,Brown,100,60,40
+Eternal Ink,Dark Brown,70,40,30
+Eternal Ink,Cocoa Bean,90,50,30
+
+Eternal Ink,Light Purple,180,130,200
+Eternal Ink,Dark Purple,90,40,120
+Eternal Ink,Periwinkle,170,150,230
+Eternal Ink,Wild Orchid,140,70,160
+
+Eternal Ink,Peach,255,190,150
+
+Iron Works,Preto Linha,10,10,10
+Iron Works,Preto Escuro,5,5,5
+Iron Works,Preto Escuro XXX,3,3,3
+Iron Works,Preto Ônix,8,8,8
+
+Iron Works,Branco,250,250,250
+Iron Works,Branco Gelo,245,245,245
+
+Iron Works,Cinza Claro,200,200,200
+Iron Works,Cinza Médio,140,140,140
+Iron Works,Cinza Escuro,80,80,80
+
+Iron Works,Amarelo Canário,255,235,60
+Iron Works,Amarelo Claro,255,220,80
+Iron Works,Amarelo Esverdeado,210,230,80
+Iron Works,Amarelo Ouro,255,200,40
+
+Iron Works,Laranja,255,120,40
+Iron Works,Laranja Claro,255,180,100
+Iron Works,Terra Cota,210,120,80
+
+Iron Works,Vermelho,220,40,40
+Iron Works,Vermelho Claro,240,80,80
+Iron Works,Vermelho Escuro,180,20,20
+Iron Works,Vermelho Terra,200,60,40
+
+Iron Works,Rosa,255,120,160
+Iron Works,Rosa Claro,255,180,190
+Iron Works,Magenta,200,0,90
+Iron Works,Roxo Escuro,100,40,100
+
+Iron Works,Azul,30,60,140
+Iron Works,Azul Claro,90,150,230
+Iron Works,Azul Escuro,20,40,120
+Iron Works,Azul Royal,40,80,160
+Iron Works,Turquesa,40,180,180
+
+Iron Works,Verde,0,140,80
+Iron Works,Verde Claro,80,180,100
+Iron Works,Verde Escuro,0,110,70
+Iron Works,Verde Água,120,220,200
+Iron Works,Verde Limão,160,255,60
+Iron Works,Verde Folha,60,140,60
+
+Iron Works,Marrom,90,60,40
+Iron Works,Marrom Claro,140,100,70
+Iron Works,Marrom Escuro,80,50,30
+Iron Works,Chocolate,90,50,30
+
+Iron Works,Salmão,250,150,120
+Iron Works,Coral,240,120,100
+Iron Works,Bege,210,190,160
+Iron Works,Areia,220,200,160
+
+Viper Ink,Preto Tribal,5,5,5
+Viper Ink,Preto Linha,10,10,10
+Viper Ink,Super Branco (Snow White),250,250,250
+
+Viper Ink,Acropolis Orange (Ferrugem),210,80,40
+Viper Ink,Bright Orange (Laranja Real),255,120,30
+Viper Ink,Velma Orange (Laranja Papaya),255,130,50
+
+Viper Ink,Bangkok Blue (Azul Médio),50,100,180
+Viper Ink,Royal Blue (Azul Royal),30,60,150
+Viper Ink,Light Blue (Azul Bebê),140,200,240
+Viper Ink,Miami Blue (Azul Céu),100,180,255
+Viper Ink,Everglades Green (Verde Água),120,220,190
+
+Viper Ink,Bloom Green (Bower Green / Verde Folha),60,140,60
+Viper Ink,Cowabunga Green (Verde Limão),160,255,60
+Viper Ink,Loki Green (Verde Água),120,210,200
+Viper Ink,Bermudas (Verde Escuro),0,120,60
+
+Viper Ink,Blood Red (Vermelho Cereja),180,0,30
+Viper Ink,Scarlet Red (Vermelho Ferrari),200,20,20
+Viper Ink,Ragnarok Red (Vermelho Bombeiro),170,10,10
+Viper Ink,Coral (Pele de Bebê),250,180,140
+
+Viper Ink,Blush Pink (Rosa Bebê),255,200,210
+Viper Ink,Paris Pink (Rosa Bebê),255,190,200
+Viper Ink,Pink Sand (Magenta),230,80,130
+Viper Ink,Violet (Violeta),120,60,160
+Viper Ink,Amsterdam Purple (Lilás),190,150,220
+Viper Ink,Light Purple (Lavanda),170,130,200
+
+Viper Ink,Golden Bug (Bege),220,200,160
+Viper Ink,Sand (Pele),230,200,170
+Viper Ink,Milk Chocolate (Marrom Claro),150,90,60
+Viper Ink,Bark Brown (Marrom Escuro),100,60,40
+
+Viper Ink,Base Grey (Cinza Naval),60,70,90
+Viper Ink,Army Grey (Cinza Prata),190,190,190
+Viper Ink,Base Grey Dark (Cinza Escuro),120,120,120
+
+Viper Ink,Citrus (Amarelo Radiante),255,230,50
