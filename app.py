@@ -1,10 +1,10 @@
+import os
 import gradio as gr
 import pandas as pd
 import numpy as np
 import cv2
 from PIL import Image
 from sklearn.cluster import KMeans
-import os
 
 # ------------------------
 # Carrega banco de tintas
@@ -16,26 +16,27 @@ def carregar_tintas():
 tintas_df = carregar_tintas()
 
 # ------------------------
-# Carrega banco de usuários
+# Carrega usuários
 # ------------------------
-usuarios_df = pd.read_csv("usuarios.csv")
+def carregar_usuarios():
+    df = pd.read_csv("usuarios.csv")
+    return df
+
+usuarios_df = carregar_usuarios()
 
 # ------------------------
-# Distância de cor
+# Funções de cores
 # ------------------------
 def distancia(c1, c2):
     return np.linalg.norm(np.array(c1) - np.array(c2))
 
-# ------------------------
-# Encontra a tinta mais próxima da marca escolhida
-# ------------------------
 def achar_tinta_mais_proxima(rgb, marca):
     banco = tintas_df[tintas_df["marca"] == marca]
     melhor = None
     menor_dist = 999999
 
     for _, row in banco.iterrows():
-        cor_banco = (row["r"], row["g"], row["b"])
+        cor_banco = (int(row["r"]), int(row["g"]), int(row["b"]))
         d = distancia(rgb, cor_banco)
         if d < menor_dist:
             menor_dist = d
@@ -43,9 +44,6 @@ def achar_tinta_mais_proxima(rgb, marca):
 
     return melhor
 
-# ------------------------
-# Mistura aproximada com primárias
-# ------------------------
 def mistura_primarias(rgb):
     r, g, b = rgb
     total = max(r+g+b, 1)
@@ -54,9 +52,6 @@ def mistura_primarias(rgb):
     pb = round((b/total)*100)
     return f"Vermelho: {pr}% | Amarelo: {pg}% | Azul: {pb}%"
 
-# ------------------------
-# Texto de aplicação no desenho
-# ------------------------
 def texto_aplicacao(rgb):
     r, g, b = rgb
     brilho = (r+g+b)/3
@@ -69,40 +64,29 @@ def texto_aplicacao(rgb):
     else:
         return "Usar para sombras profundas, recortes e áreas de maior peso visual."
 
-# ------------------------
-# Extrai TODAS as cores do desenho
-# ------------------------
 def extrair_cores(imagem, marca):
     img = np.array(imagem)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
     pixels = img.reshape((-1,3))
     pixels = np.float32(pixels)
-
     k = min(25, len(np.unique(pixels, axis=0)))
     kmeans = KMeans(n_clusters=k, random_state=42)
     kmeans.fit(pixels)
-
     cores = np.uint8(kmeans.cluster_centers_)
     resultados = []
-
     for cor in cores:
         rgb = (int(cor[2]), int(cor[1]), int(cor[0]))
         tinta = achar_tinta_mais_proxima(rgb, marca)
         mistura = mistura_primarias(rgb)
         aplicacao = texto_aplicacao(rgb)
-
         resultados.append({
             "rgb": rgb,
             "nome": tinta["nome"],
             "mistura": mistura,
             "aplicacao": aplicacao
         })
-
     return resultados
 
-# ------------------------
-# Processa imagem para mostrar HTML
-# ------------------------
 def processar(imagem, marca):
     resultados = extrair_cores(imagem, marca)
     html = "<div style='background:#111;padding:20px;'>"
@@ -121,58 +105,51 @@ def processar(imagem, marca):
     return html
 
 # ------------------------
-# Função de login
+# Login
 # ------------------------
 def verificar_login(usuario, senha):
     valido = ((usuarios_df["usuario"] == usuario) & (usuarios_df["senha"] == senha)).any()
     if valido:
-        return gr.update(visible=True), gr.update(visible=False), ""
+        return gr.update(visible=False), gr.update(visible=True), ""
     else:
-        return gr.update(visible=False), gr.update(visible=True), "Usuário ou senha inválidos"
+        return gr.update(visible=True), gr.update(visible=False), "Usuário ou senha inválidos"
 
 # ------------------------
 # Interface
 # ------------------------
 with gr.Blocks(css="""
-body { background:#000; }
+body { background:#000; color:white; font-family:sans-serif; }
 h1, h2, p { color:white; }
 """) as demo:
 
-    # Login
-    gr.Markdown("# 🔒 Login - Bira Tattoo Paletas")
-    usuario_input = gr.Textbox(label="Usuário", placeholder="Digite seu usuário")
-    senha_input = gr.Textbox(label="Senha", placeholder="Digite sua senha", type="password")
-    login_btn = gr.Button("Entrar")
-    login_msg = gr.Textbox(label="", interactive=False)
+    # ---------- LOGIN ----------
+    with gr.Column(visible=True) as login_container:
+        gr.Markdown("# 🔒 Login - Bira Tattoo Paletas")
+        usuario_input = gr.Textbox(label="Usuário", placeholder="Digite seu usuário")
+        senha_input = gr.Textbox(label="Senha", placeholder="Digite sua senha", type="password")
+        login_btn = gr.Button("Entrar")
+        login_msg = gr.Textbox(label="", interactive=False)
 
-    # App principal (inicialmente invisível)
-    app_container = gr.Column(visible=False)
-
-    with app_container:
+    # ---------- APP PRINCIPAL ----------
+    with gr.Column(visible=False) as app_container:
         gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores")
         gr.Markdown("Sistema profissional para extração de paletas reais baseadas na marca de tinta usada no estúdio.")
-
-        marca = gr.Dropdown(
-            choices=tintas_df["marca"].unique().tolist(),
-            value="Electric Ink",
-            label="Selecione a marca da tinta"
-        )
-
+        marca = gr.Dropdown(choices=tintas_df["marca"].unique().tolist(),
+                             value="Electric Ink",
+                             label="Selecione a marca da tinta")
         imagem = gr.Image(type="pil", label="Upload do desenho")
         btn = gr.Button("Gerar Paleta Profissional")
         saida = gr.HTML()
         btn.click(processar, inputs=[imagem, marca], outputs=saida)
 
-    # Conecta botão de login
-    login_btn.click(
-        verificar_login,
-        inputs=[usuario_input, senha_input],
-        outputs=[app_container, usuario_input, login_msg]
-    )
+    login_btn.click(verificar_login,
+                    inputs=[usuario_input, senha_input],
+                    outputs=[login_container, app_container, login_msg])
 
 # ------------------------
-# Lançamento do app
+# Launch
 # ------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7860))
-    demo.launch(server_name="0.0.0.0", server_port=port)
+    demo.launch(server_name="0.0.0.0", server_port=port,
+                show_error=True, show_api=False, show_tips=False)
