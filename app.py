@@ -4,6 +4,7 @@ import numpy as np
 import cv2
 from PIL import Image
 from sklearn.cluster import KMeans
+import os
 
 # ------------------------
 # Carrega banco de tintas
@@ -13,6 +14,11 @@ def carregar_tintas():
     return df
 
 tintas_df = carregar_tintas()
+
+# ------------------------
+# Carrega banco de usuários
+# ------------------------
+usuarios_df = pd.read_csv("usuarios.csv")
 
 # ------------------------
 # Distância de cor
@@ -43,11 +49,9 @@ def achar_tinta_mais_proxima(rgb, marca):
 def mistura_primarias(rgb):
     r, g, b = rgb
     total = max(r+g+b, 1)
-
     pr = round((r/total)*100)
     pg = round((g/total)*100)
     pb = round((b/total)*100)
-
     return f"Vermelho: {pr}% | Amarelo: {pg}% | Azul: {pb}%"
 
 # ------------------------
@@ -56,7 +60,6 @@ def mistura_primarias(rgb):
 def texto_aplicacao(rgb):
     r, g, b = rgb
     brilho = (r+g+b)/3
-
     if brilho > 200:
         return "Usar em áreas de luz, reflexos e pontos mais altos do volume."
     elif brilho > 120:
@@ -72,24 +75,19 @@ def texto_aplicacao(rgb):
 def extrair_cores(imagem, marca):
     img = np.array(imagem)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
     pixels = img.reshape((-1,3))
     pixels = np.float32(pixels)
 
-    # K automático baseado na diversidade real do desenho
-    # Quanto mais detalhe o desenho tiver, mais cores aparecem
     k = min(25, len(np.unique(pixels, axis=0)))
     kmeans = KMeans(n_clusters=k, random_state=42)
     kmeans.fit(pixels)
 
     cores = np.uint8(kmeans.cluster_centers_)
-
     resultados = []
 
     for cor in cores:
         rgb = (int(cor[2]), int(cor[1]), int(cor[0]))
         tinta = achar_tinta_mais_proxima(rgb, marca)
-
         mistura = mistura_primarias(rgb)
         aplicacao = texto_aplicacao(rgb)
 
@@ -103,11 +101,10 @@ def extrair_cores(imagem, marca):
     return resultados
 
 # ------------------------
-# Interface
+# Processa imagem para mostrar HTML
 # ------------------------
 def processar(imagem, marca):
     resultados = extrair_cores(imagem, marca)
-
     html = "<div style='background:#111;padding:20px;'>"
     for r in resultados:
         cor = f"rgb{r['rgb']}"
@@ -123,29 +120,59 @@ def processar(imagem, marca):
     html += "</div>"
     return html
 
+# ------------------------
+# Função de login
+# ------------------------
+def verificar_login(usuario, senha):
+    valido = ((usuarios_df["usuario"] == usuario) & (usuarios_df["senha"] == senha)).any()
+    if valido:
+        return gr.update(visible=True), gr.update(visible=False), ""
+    else:
+        return gr.update(visible=False), gr.update(visible=True), "Usuário ou senha inválidos"
 
+# ------------------------
+# Interface
+# ------------------------
 with gr.Blocks(css="""
 body { background:#000; }
-h1, h2, p { color:black; }
+h1, h2, p { color:white; }
 """) as demo:
 
-    gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores")
-    gr.Markdown("Sistema profissional para extração de paletas reais baseadas na marca de tinta usada no estúdio.")
+    # Login
+    gr.Markdown("# 🔒 Login - Bira Tattoo Paletas")
+    usuario_input = gr.Textbox(label="Usuário", placeholder="Digite seu usuário")
+    senha_input = gr.Textbox(label="Senha", placeholder="Digite sua senha", type="password")
+    login_btn = gr.Button("Entrar")
+    login_msg = gr.Textbox(label="", interactive=False)
 
-    marca = gr.Dropdown(choices=tintas_df["marca"].unique().tolist(),
-                         value="Electric Ink",
-                         label="Selecione a marca da tinta")
+    # App principal (inicialmente invisível)
+    app_container = gr.Column(visible=False)
 
-    imagem = gr.Image(type="pil", label="Upload do desenho")
+    with app_container:
+        gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores")
+        gr.Markdown("Sistema profissional para extração de paletas reais baseadas na marca de tinta usada no estúdio.")
 
-    btn = gr.Button("Gerar Paleta Profissional")
+        marca = gr.Dropdown(
+            choices=tintas_df["marca"].unique().tolist(),
+            value="Electric Ink",
+            label="Selecione a marca da tinta"
+        )
 
-    saida = gr.HTML()
+        imagem = gr.Image(type="pil", label="Upload do desenho")
+        btn = gr.Button("Gerar Paleta Profissional")
+        saida = gr.HTML()
+        btn.click(processar, inputs=[imagem, marca], outputs=saida)
 
-    btn.click(processar, inputs=[imagem, marca], outputs=saida)
+    # Conecta botão de login
+    login_btn.click(
+        verificar_login,
+        inputs=[usuario_input, senha_input],
+        outputs=[app_container, usuario_input, login_msg]
+    )
 
-import os
-
+# ------------------------
+# Lançamento do app
+# ------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7860))
     demo.launch(server_name="0.0.0.0", server_port=port)
