@@ -1,4 +1,6 @@
-flask
-opencv-python-headless
+gradio
+pandas
 numpy
-flask-cors
+opencv-python
+pillow
+scikit-learn
