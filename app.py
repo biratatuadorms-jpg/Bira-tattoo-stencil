@@ -7,6 +7,14 @@ from PIL import Image
 from sklearn.cluster import KMeans
 
 # ------------------------
+# Usuários e senhas
+# ------------------------
+usuarios = {
+    "tatuador": "123456",  # Exemplo, você pode adicionar mais usuários
+    "cliente": "senha123"
+}
+
+# ------------------------
 # Carrega banco de tintas
 # ------------------------
 def carregar_tintas():
@@ -16,48 +24,34 @@ def carregar_tintas():
 tintas_df = carregar_tintas()
 
 # ------------------------
-# Distância de cor
+# Funções do app
 # ------------------------
 def distancia(c1, c2):
     return np.linalg.norm(np.array(c1) - np.array(c2))
 
-# ------------------------
-# Encontra a tinta mais próxima da marca escolhida
-# ------------------------
 def achar_tinta_mais_proxima(rgb, marca):
     banco = tintas_df[tintas_df["marca"] == marca]
     melhor = None
     menor_dist = 999999
-
     for _, row in banco.iterrows():
-        cor_banco = (int(row["r"]), int(row["g"]), int(row["b"]))  # Garantir tipo int
+        cor_banco = (int(row["r"]), int(row["g"]), int(row["b"]))
         d = distancia(rgb, cor_banco)
         if d < menor_dist:
             menor_dist = d
             melhor = row
-
     return melhor
 
-# ------------------------
-# Mistura aproximada com primárias
-# ------------------------
 def mistura_primarias(rgb):
     r, g, b = rgb
-    total = max(r+g+b, 1)
-
+    total = max(r+g+b,1)
     pr = round((r/total)*100)
     pg = round((g/total)*100)
     pb = round((b/total)*100)
-
     return f"Vermelho: {pr}% | Amarelo: {pg}% | Azul: {pb}%"
 
-# ------------------------
-# Texto de aplicação no desenho
-# ------------------------
 def texto_aplicacao(rgb):
     r, g, b = rgb
     brilho = (r+g+b)/3
-
     if brilho > 200:
         return "Usar em áreas de luz, reflexos e pontos mais altos do volume."
     elif brilho > 120:
@@ -67,47 +61,31 @@ def texto_aplicacao(rgb):
     else:
         return "Usar para sombras profundas, recortes e áreas de maior peso visual."
 
-# ------------------------
-# Extrai TODAS as cores do desenho
-# ------------------------
 def extrair_cores(imagem, marca):
     img = np.array(imagem)
     img = cv2.cvtColor(img, cv2.COLOR_RGB2BGR)
-
     pixels = img.reshape((-1,3))
     pixels = np.float32(pixels)
-
-    # K automático baseado na diversidade real do desenho
     k = min(25, len(np.unique(pixels, axis=0)))
     kmeans = KMeans(n_clusters=k, random_state=42)
     kmeans.fit(pixels)
-
     cores = np.uint8(kmeans.cluster_centers_)
-
     resultados = []
-
     for cor in cores:
         rgb = (int(cor[2]), int(cor[1]), int(cor[0]))
         tinta = achar_tinta_mais_proxima(rgb, marca)
-
         mistura = mistura_primarias(rgb)
         aplicacao = texto_aplicacao(rgb)
-
         resultados.append({
             "rgb": rgb,
             "nome": tinta["nome"],
             "mistura": mistura,
             "aplicacao": aplicacao
         })
-
     return resultados
 
-# ------------------------
-# Interface
-# ------------------------
 def processar(imagem, marca):
     resultados = extrair_cores(imagem, marca)
-
     html = "<div style='background:#111;padding:20px;'>"
     for r in resultados:
         cor = f"rgb{r['rgb']}"
@@ -123,29 +101,47 @@ def processar(imagem, marca):
     html += "</div>"
     return html
 
+# ------------------------
+# Função de login
+# ------------------------
+def login(usuario, senha):
+    if usuario in usuarios and usuarios[usuario] == senha:
+        return gr.update(visible=False), gr.update(visible=True), ""
+    else:
+        return gr.update(visible=True), gr.update(visible=False), "Usuário ou senha inválidos"
 
+# ------------------------
+# Interface Gradio
+# ------------------------
 with gr.Blocks(css="""
-body { background:#000; }
+body { background:#000; color:white; }
 h1, h2, p { color:black; }
 """) as demo:
 
-    gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores", elem_id="titulo_app", visible=True)
-    gr.Markdown("Sistema profissional para extração de paletas reais baseadas na marca de tinta usada no estúdio.", elem_id="desc_app", visible=True)
-
-    marca = gr.Dropdown(choices=tintas_df["marca"].unique().tolist(),
-                         value="Electric Ink",
-                         label="Selecione a marca da tinta")
-
-    imagem = gr.Image(type="pil", label="Upload do desenho")
-
-    btn = gr.Button("Gerar Paleta Profissional")
-
-    saida = gr.HTML()
-
-    btn.click(processar, inputs=[imagem, marca], outputs=saida)
+    # Login
+    with gr.Column(visible=True) as login_box:
+        gr.Markdown("# 🔒 Login Bira Tattoo")
+        usuario = gr.Textbox(label="Usuário")
+        senha = gr.Textbox(label="Senha", type="password")
+        msg_login = gr.Textbox(label="", interactive=False)
+        btn_login = gr.Button("Entrar")
+    
+    # App de paletas
+    with gr.Column(visible=False) as app_box:
+        gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores")
+        gr.Markdown("Sistema profissional para extração de paletas reais baseadas na marca de tinta usada no estúdio.")
+        marca = gr.Dropdown(choices=tintas_df["marca"].unique().tolist(),
+                            value="Electric Ink",
+                            label="Selecione a marca da tinta")
+        imagem = gr.Image(type="pil", label="Upload do desenho")
+        btn = gr.Button("Gerar Paleta Profissional")
+        saida = gr.HTML()
+        btn.click(processar, inputs=[imagem, marca], outputs=saida)
+    
+    btn_login.click(login, inputs=[usuario, senha], outputs=[login_box, app_box, msg_login])
 
 # ------------------------
-# Main guard para Render
+# Launch no Render
 # ------------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 7860))
