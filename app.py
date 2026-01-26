@@ -126,7 +126,7 @@ def processar(imagem, marca):
 
 with gr.Blocks(css="""
 body { background:#000; }
-h1, h2, p { color:white; }
+h1, h2, p { color:black; }
 """) as demo:
 
     gr.Markdown("# 🎨 Bira Tattoo – Paletas de Cores")
